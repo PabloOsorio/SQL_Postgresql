@@ -1,0 +1,243 @@
+postgres=# \list
+                                                 List of databases
+    Name    |  Owner   | Encoding | Locale Provider | Collate | Ctype | Locale | ICU Rules |   Access privileges
+------------+----------+----------+-----------------+---------+-------+--------+-----------+-----------------------
+ postgres   | postgres | UTF8     | libc            | es-MX   | es-MX |        |           |
+ prueba_tec | postgres | UTF8     | libc            | es-MX   | es-MX |        |           |
+ template0  | postgres | UTF8     | libc            | es-MX   | es-MX |        |           | =c/postgres          +
+            |          |          |                 |         |       |        |           | postgres=CTc/postgres
+ template1  | postgres | UTF8     | libc            | es-MX   | es-MX |        |           | =c/postgres          +
+            |          |          |                 |         |       |        |           | postgres=CTc/postgres
+(4 rows)
+
+
+postgres=# \c prueba_tec
+You are now connected to database "prueba_tec" as user "postgres".
+prueba_tec=# \dt
+           List of relations
+ Schema |   Name    | Type  |  Owner
+--------+-----------+-------+----------
+ public | charges   | table | postgres
+ public | companies | table | postgres
+(2 rows)
+
+
+prueba_tec=# \d charges
+                          Table "public.charges"
+   Column   |            Type             | Collation | Nullable | Default
+------------+-----------------------------+-----------+----------+---------
+ id         | character varying(50)       |           | not null |
+ company_id | character varying(50)       |           |          |
+ amount     | numeric(16,2)               |           | not null |
+ status     | character varying(30)       |           | not null |
+ created_at | timestamp without time zone |           | not null |
+ updated_at | timestamp without time zone |           |          |
+Indexes:
+    "charges_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "charges_company_id_fkey" FOREIGN KEY (company_id) REFERENCES companies(company_id)
+
+
+prueba_tec=# select * from charges limit 10;
+                    id                    |                company_id                | amount |     status      |     created_at      |     updated_at
+------------------------------------------+------------------------------------------+--------+-----------------+---------------------+---------------------
+ 48ba4bdbfb56ceebb32f2bd0263e759be942af3d | cbf1c8b09cd5b549416d49d220a40cbd317f952e |   3.00 | voided          | 2019-03-19 00:00:00 |
+ 05fc6f5ac66b6ee7e4253aa5d0c2299eb47aaaf4 | cbf1c8b09cd5b549416d49d220a40cbd317f952e |   3.00 | pending_payment | 2019-05-06 00:00:00 |
+ 2cdce231c1fc6a2061bfa2f1d978351fe217245d | cbf1c8b09cd5b549416d49d220a40cbd317f952e |   3.00 | voided          | 2019-02-22 00:00:00 |
+ 81633ba310a50b673efd469c37139576982901aa | cbf1c8b09cd5b549416d49d220a40cbd317f952e | 102.61 | paid            | 2019-02-27 00:00:00 | 2019-02-27 00:00:00
+ 6ccfc4c24e788e4bca448df343698782db6b0c0b | cbf1c8b09cd5b549416d49d220a40cbd317f952e | 184.49 | paid            | 2019-02-05 00:00:00 | 2019-02-05 00:00:00
+ b25f2ff15c24ea881e676be772f4dd99891ad188 | cbf1c8b09cd5b549416d49d220a40cbd317f952e |  85.27 | pending_payment | 2019-01-04 00:00:00 |
+ 4f9db76960dcdf6b7e2d7d71b11519e49d7b1179 | cbf1c8b09cd5b549416d49d220a40cbd317f952e |  41.00 | pre_authorized  | 2019-05-04 00:00:00 |
+ 7e96211c7d133a6227e809abc3d3ab18992b36b9 | cbf1c8b09cd5b549416d49d220a40cbd317f952e |   3.00 | pending_payment | 2019-01-23 00:00:00 |
+ 6ee515d5f0a1995731fb31053278e9700d67947c | cbf1c8b09cd5b549416d49d220a40cbd317f952e |  41.61 | voided          | 2019-05-03 00:00:00 |
+ cdf1a7a6f5c9b0db543371f9e4bd127b451c09c9 | cbf1c8b09cd5b549416d49d220a40cbd317f952e | 115.84 | paid            | 2019-01-22 00:00:00 | 2019-01-22 00:00:00
+(10 rows)
+
+
+prueba_tec=# select count(*) from charges
+prueba_tec-# select count(*) from charges;
+ERROR:  error de sintaxis en o cerca de «select»
+LINE 2: select count(*) from charges;
+        ^
+prueba_tec=# SELECT COUNT(*) FROM charges;
+ count
+-------
+  9998
+(1 row)
+
+
+prueba_tec=# \dt
+           List of relations
+ Schema |   Name    | Type  |  Owner
+--------+-----------+-------+----------
+ public | charges   | table | postgres
+ public | companies | table | postgres
+(2 rows)
+
+
+prueba_tec=# \d companies
+                        Table "public.companies"
+    Column    |          Type          | Collation | Nullable | Default
+--------------+------------------------+-----------+----------+---------
+ company_id   | character varying(50)  |           | not null |
+ company_name | character varying(130) |           | not null |
+Indexes:
+    "companies_pkey" PRIMARY KEY, btree (company_id)
+Referenced by:
+    TABLE "charges" CONSTRAINT "charges_company_id_fkey" FOREIGN KEY (company_id) REFERENCES companies(company_id)
+
+
+prueba_tec=# SELECT * FROM companies LIMIT 10;
+                company_id                |  company_name
+------------------------------------------+----------------
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos
+ nan                                      | MiPasajefy
+ *******                                  | MiPasajefy
+(4 rows)
+
+
+prueba_tec=# SELECT * FROM companies;
+                company_id                |  company_name
+------------------------------------------+----------------
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos
+ nan                                      | MiPasajefy
+ *******                                  | MiPasajefy
+(4 rows)
+
+
+prueba_tec=# CREATE VIEW total_transacciones_por_dia AS
+prueba_tec-# SELECT
+prueba_tec-#     c.company_id,
+prueba_tec-#     c.company_name,
+prueba_tec-#     DATE(ch.created_at) AS fecha,
+prueba_tec-#     SUM(ch.amount) AS total_transaccionado
+prueba_tec-# FROM
+prueba_tec-#     charges ch
+prueba_tec-# JOIN
+prueba_tec-#     companies c ON ch.company_id = c.company_id
+prueba_tec-# GROUP BY
+prueba_tec-#     c.company_id, c.company_name, DATE(ch.created_at)
+prueba_tec-# ORDER BY
+prueba_tec-#     fecha, c.company_id;
+CREATE VIEW
+prueba_tec=#
+prueba_tec=# select * from total_transacciones_por_dia
+prueba_tec-# select * from total_transacciones_por_dias
+prueba_tec-# SELECT * FROM total_transacciones_por_dia;
+ERROR:  error de sintaxis en o cerca de «select»
+LINE 2: select * from total_transacciones_por_dias
+        ^
+prueba_tec=# SELECT * FROM total_transacciones_por_dia;
+                company_id                |  company_name  |   fecha    | total_transaccionado
+------------------------------------------+----------------+------------+----------------------
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-01 |              4150.04
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-02 |             17044.92
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-03 |              3199.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-03 |              6735.66
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-04 |              6349.69
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-05 |              5184.97
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-06 |              4005.46
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-07 |             26754.30
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-08 |              5963.77
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-09 |               399.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-09 |              5859.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-10 |              9040.75
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-11 |              8646.82
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-12 |              6456.20
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-13 |             23541.02
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-14 |              8197.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-14 |              3884.07
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-15 |              6770.77
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-16 |             16372.74
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-17 |               669.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-17 |              7058.25
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-18 |              5218.34
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-19 |              5225.46
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-20 |              9998.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-20 |             11928.39
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-21 |             19592.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-21 |              4250.08
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-22 |              7999.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-22 |              3650.23
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-23 |             13828.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-23 |              4882.16
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-24 |             44311.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-24 |              6264.40
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-25 |              7717.01
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-26 |              9999.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-26 |              3815.99
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-27 |              6999.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-27 |              3181.81
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-28 |              3992.72
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-29 |             10169.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-29 |              3813.49
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-01-30 |              3743.10
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-30 |              6070.39
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-01-31 |             12046.01
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-01 |             30459.75
+ nan                                      | MiPasajefy     | 2019-02-01 |                 3.00
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-02 |             15760.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-02 |             11379.42
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-03 |              3378.15
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-04 |             11504.24
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-05 |              6748.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-05 |             64287.58
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-06 |              4488.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-06 |             23992.03
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-07 |              8546.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-07 |              4747.50
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-08 |        1000006385.15
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-09 |              3143.82
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-10 |              7232.52
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-11 |             61558.10
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-11 |              8218.57
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-12 |              1859.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-12 |              5689.62
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-13 |              7198.05
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-14 |             31542.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-14 |              7596.14
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-15 |              7895.90
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-16 |              5443.40
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-17 |              7621.24
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-18 |             26694.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-18 |              4629.34
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-19 |             10997.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-19 |              6890.84
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-20 |              1598.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-20 |              8734.27
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-21 |              6339.35
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-22 |              3068.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-22 |              8194.43
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-23 |             52239.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-23 |              6436.20
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-24 |              6196.91
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-25 |             22221.15
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-25 |              5345.52
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-26 |              5577.60
+ *******                                  | MiPasajefy     | 2019-02-27 |                92.66
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-27 |             12132.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-27 |              8404.32
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-02-28 |             11416.05
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-02-28 |              7457.03
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-01 |             15088.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-01 |             44466.58
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-02 |             22584.39
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-03 |              4042.40
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-04 |              7698.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-04 |              5739.03
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-05 |             13495.20
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-05 |             56161.46
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-06 |            110839.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-06 |              8999.90
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-07 |              7699.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-07 |              7357.27
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-08 |             14957.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-08 |              7679.82
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-09 |              6999.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-09 |              7858.89
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-10 |              4284.61
+ 8f642dc67fccf861548dfe1c761ce22f795e91f0 | Muebles chidos | 2019-03-11 |              7898.00
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-11 |              5575.11
+ cbf1c8b09cd5b549416d49d220a40cbd317f952e | MiPasajefy     | 2019-03-12 |              4237.14
