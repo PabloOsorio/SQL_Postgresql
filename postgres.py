@@ -1,13 +1,15 @@
 import psycopg2
 import pandas as pd
 import numpy as np
+import getpass;
 
 
+contraseña_postgre = getpass.getpass("ingresa contraseña de Postgre")
 #Ahora nos comunicaremos cons postgres
 conn = psycopg2.connect(
     dbname="prueba_tec",
     user = "postgres",
-    password = "Camaleon69",
+    password = contraseña_postgre,
     host="localhost",
     port="5432"
 )
@@ -105,7 +107,7 @@ def insert_data_to_postgres(df,conn):
     cursor.close()
 
 
-file_path = r"C:\Users\pablo\Documents\VisualS\data_prueba.csv"
+file_path = r"C:\Users\pablo\Desktop\Proyectos\PruebaT_PipelineETL\data_prueba.csv"
 df = pd.read_csv(file_path)  # Carga los datos
 
 print(df.head())  # Verifica que los datos se cargaron correctamente
@@ -114,7 +116,7 @@ print(df.head())  # Verifica que los datos se cargaron correctamente
 #Preprocesar
 df = preprocess_data(df)
 
-# Llama a la función con la conexión a PostgreSQL
+#Llama a la función con la conexión a PostgreSQL
 insert_data_to_postgres(df, conn)
 
 conn.close()

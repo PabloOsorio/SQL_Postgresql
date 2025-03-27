@@ -2,14 +2,17 @@ import pandas as pd
 import mysql.connector
 import numpy as np
 import os
+import getpass;
 
 #Funcion para establecer conexion con mysql
+
+mysql_password = getpass.getpass("Ingresa contraseña de MySQL")
 def connect_to_mysql():
     try:
         conn = mysql.connector.connect(
             host = "localhost",
             user = "root",
-            password = "Camaleon69",
+            password = mysql_password,
             database = "prueba_tec"
         )
         return conn
@@ -82,7 +85,7 @@ def insert_data_to_mysql(df,conn):
     cursor.close()
 
 def main():
-    file_path = r"C:\Users\pablo\Documents\VisualS\data_prueba.csv"
+    file_path = r"C:\Users\pablo\Desktop\Proyectos\PruebaT_PipelineETL\data_prueba.csv"
     conn = connect_to_mysql()
     if conn:
         create_table(conn)
